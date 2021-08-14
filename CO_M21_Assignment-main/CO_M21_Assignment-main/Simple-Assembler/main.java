@@ -1,37 +1,40 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+
+
+
 // import java.io.*;
 
-class main88{
+class Main{
 
     static int[] registers = new int[8];
 
     static String Rcode(String R){
 
-        if(R.equals("reg0"))
+        if(R.equals("R0"))
         {
 
             return "000";
         }
-        if(R.equals("reg1"))
+        if(R.equals("R1"))
         {
             return "001";
         }
-        if(R.equals("reg2"))
+        if(R.equals("R2"))
         {
             return "010";
-        }if(R.equals("reg3"))
+        }if(R.equals("R3"))
         {
             return "011";
-        }if(R.equals("reg4"))
+        }if(R.equals("R4"))
         {
             return "100";
-        }if(R.equals("reg5"))
+        }if(R.equals("R5"))
         {
             return "101";
-        }if(R.equals("reg6"))
+        }if(R.equals("R6"))
         {
             return "110";
         }
@@ -40,8 +43,8 @@ class main88{
             return "111";
         }
         else
-            {   doWeStop=true;
-                return "wrong reg";}
+        {   doWeStop=true;
+            return "wrong reg";}
     }
 
     static String[]  OPcode(String[] arr){
@@ -92,7 +95,7 @@ class main88{
         {
             if(arr[2].subSequence(0, 1).equals("$"))
             {op[0] = "00010";
-             op[1] = "B";
+                op[1] = "B";
             }
             else{
                 op[0] = "00011";
@@ -159,18 +162,37 @@ class main88{
 
         String display = "";
         display = display + op[0];
+//        System.out.println("our loved ones = "+display);
+
         String r0 = Rcode(arr[1]);
+
+
+//        System.out.println(r0);
         if(r0.equals("wrong reg")){
             return;
         }
         //ADD ERROR FOR $
         if(arr[2].charAt(0)!='$'){
+
             System.out.println("Error! $ not inserted before an immediate value");
+
             doWeStop=true;
             return;
         }
         int num = Integer.parseInt(arr[2].substring(1));
-        if((num<0)||(num>255)){
+        // if((num<0)||(num>255)){
+        //     System.out.println("Error! the number inserted is out of range");
+        //     doWeStop=true;
+        //     return;
+        // }
+        int flagn=0;
+        for(int i=0; i<range.length; i++){
+            if(num==range[i]){
+                flagn=1;
+                break;
+            }
+        }
+        if(flagn==0){
             System.out.println("Error! the number inserted is out of range");
             doWeStop=true;
             return;
@@ -201,13 +223,16 @@ class main88{
 
 
     static void FinalD(String [] arr , String [] op){
+
         String str = "";
         str = str + op[0];
         // str = str + Rcode(arr[1]);
         String r0 = Rcode(arr[1]);
+
         if(r0.equals("wrong reg")){
             return;
         }
+
         String var = arr[2];
         int idx_var_present = -1;
         boolean notPresent = true;
@@ -219,10 +244,15 @@ class main88{
             }
         }
         if(!notPresent){
+
+
             int var_value_decimal = Integer.parseInt(variables.get(idx_var_present)[1]);
             String var_value_binary = Integer.toBinaryString(var_value_decimal);
             str = str + var_value_binary;
             System.out.println(str);
+        } else{
+            doWeStop = true;
+            System.out.println("use of undefinded variable is prohibited");
         }
 
     }
@@ -260,40 +290,56 @@ class main88{
 
 
     static void FullFinal(String[] arr)    {
+
+
+//        System.out.println("entering the full final ");
+
         String op[];
         op = OPcode(arr);
         String type = op[1];
+
+//        System.out.println("string type = " +type);
         if(type == "A"){
             FinalA(op, arr);
         }
         if(type == "B"){
-           FinalB(op, arr);
+
+//            System.out.println("entering the final B");
+            FinalB(op, arr);
         }
         if(type == "C"){
-           FinalC(op, arr);
+            FinalC(op, arr);
         }
         if(type == "D"){
 //            FinalD(op);
         }
         if(type == "E"){
-           FinalE(op, arr);
+            FinalE(op, arr);
         }
         if(type == "F"){
-           FinalF();
+            FinalF();
         }
     }
 
     static boolean doWeStop= false;
     static ArrayList<String> labesls = new ArrayList<String>();
-    static ArrayList<String[]> labels_with_memory = new ArrayList<String[]>(); 
-    static ArrayList<String[]> variables = new ArrayList<String[]>();  //this vairble's any element will be {"X", "2"}
+    static ArrayList<String[]> labels_with_memory = new ArrayList<String[]>(); //some element in this array = {"label", "5"}
+    static ArrayList<String[]> variables = new ArrayList<String[]>();  //this vairble's any element will be {"X", "2"} = tomAndJerry
+    static int number_of_vars;
+    static int count_lines;
+    static int[] range = new int[256];
 
     static boolean CheckForRun(String[] arr,ArrayList<String[]> Loki ){
         //add r1 r2 r3
         //lable add r1 r2 r3
         //IsLable true Arr2 = arr[1 to n]
+
+//        System.out.println("entered the check for run");
         boolean IsTheEnd = false;  //If true then there's some error.
         boolean[] typoLable = LabelAndOperator(arr); //{true, flase} //{IsTypo, IsLabel}
+
+//        System.out.println("is typo + " + typoLable[0]);
+//        System.out.println("is label + " +typoLable[1]);
 
         if(typoLable[0]==true){
             if(typoLable[2]==false){
@@ -307,9 +353,14 @@ class main88{
             }
 
         } else{
-            if(typoLable[1]==false){  //IsLabel: when there's not a label
 
-            } else{   //when there's a label
+//            System.out.println("/////////////in the else");
+            if(typoLable[1]==false){  //IsLabel: when there's not a label
+//                System.out.println("all okay");
+
+            } else{
+//                System.out.println("****did we came here?");
+                //when there's a label
                 String[] new_arr = new String[arr.length-1];
                 //arr[0] is out label
                 //adding it to labels list
@@ -323,16 +374,137 @@ class main88{
                 arr = new_arr;
             }
         }
+
+
+
         FullFinal(arr);
+
+//        System.out.println("after the fullfinal ");
+//        System.out.println(doWeStop);
         return doWeStop;
     }
 
+    static void labels_with_memory_maker(ArrayList<String[] > Loki){
+        //This function will tell us if there is typo in label
+        //This function will run in main before everything
+        //Let's call this a Odin Function it'll run before Loki
 
+//        System.out.println("now we are inside of label maker");
+
+        boolean InValidLabel_for_loki = false;
+        for(int ii=0; ii<Loki.size(); ii++)
+        {
+            String[] arr = Loki.get(ii); //{"label:", "add", "reg0","reg1","reg2"}
+
+            //here we will check label is correct or not i.e. is there collen at the end?
+            String A[] = {"add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls",
+                    "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je", "hlt"};
+            int an = A.length;
+
+            String first = arr[0];
+//            String second = arr[1];
+            boolean second_syntax_error = false;
+
+            boolean IsLable = true;  //if there's a label than true else flase
+            boolean IsTypo = false;//if there's typo than true else false
+            boolean InValidLabel = false;
+            boolean[] typoLable = {IsTypo, IsLable, InValidLabel};
+
+//            System.out.println("so this is first = " + first);
+            for(int i =0; i<A.length; i++)
+            {
+                if(first.equals(A[i])){
+                    IsLable = false;
+//                    System.out.println("got it "+ first + " is first and "+ A[i] + " is A[i]");
+                    break;
+
+                }
+            }
+//            System.out.println("this is Label + " + IsLable);
+            if(IsLable== true){
+//                System.out.println("is label should be false, is it?");
+                String Aa = first;  //kunal:
+
+                int n = Aa.length(); //6
+
+                String[] arrayA = Aa.split(""); //[k,u,n,a,l,:]
+
+                String collen = arrayA[n-1]; //5th =:
+
+                if(collen==":"){
+
+
+                    String label = Aa.substring(0, n-1);
+                    //checking if label is made of any commands like add, mul or div
+
+                    for(int iii=0; iii<A.length; iii++)
+                    {
+                        if(label.equals(A[iii])){
+                        System.out.println("You cannot use this Label");
+                            IsTypo = true;
+                            InValidLabel = true;
+                            InValidLabel_for_loki = true;
+                            doWeStop = true;
+                            System.out.println("line number 408's doWeStop = " + doWeStop);
+                            break;
+
+                        }
+                    }
+                    if(InValidLabel_for_loki = false){
+
+
+                        //now we are sure that there's a label and it's a valid so now we will check if arr[1]
+                        //that is in this valid label case will be our operator that is add or mul ect
+
+                        //checking wheather arr[1]= second has valid sytax or not
+
+                        String second = arr[1];
+                        for(int ij = 0; ij<A.length; ij ++){
+                            if(second.equals(A[ij])){
+
+                                second_syntax_error = true;
+                            }
+
+                        }
+                        if(second_syntax_error == false)
+                        {
+                            doWeStop = true;
+                            break;
+                            //this means after label the syntax of operator is not correct
+
+                        }
+                        //so now label is correct and command after label is also correct so now we will save label and it's line number
+
+                        String[] label_memory = new String[2];
+                        label_memory[0] = label;
+                        label_memory[1] = Integer.toString(ii-number_of_vars);
+                        labels_with_memory.add(label_memory);
+
+                    }else{
+                        doWeStop = true;
+                        break;
+                    }
+
+
+
+                }
+                else{
+                    InValidLabel_for_loki = true;
+                    IsTypo = true;
+                    doWeStop = true;
+                }
+            }
+        }
+
+//        System.out.println("this is end of label maker");
+//        System.out.println("at the end of label maker value of doWeStop + " );
+//        System.out.println(doWeStop);
+    }
 
     static  boolean[] LabelAndOperator(String[] arr){
 
         String A[] = {"add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls",
-                    "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je", "hlt"};
+                "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je", "hlt"};
         int an = A.length;
         String B[] = {"reg0","reg1","reg2","reg3","reg4","reg5","reg6","FLAGS"};
         //Two conditions either there's  a Lable or Not
@@ -340,6 +512,8 @@ class main88{
         //arr[0] will be either lable or command
 
         String first = arr[0];
+
+
         boolean IsLable = false;  //if there's a label than true else flase
         boolean IsTypo = false;//if there's typo than true else false
         boolean InValidLabel = false;
@@ -358,35 +532,48 @@ class main88{
         }
 
         if(IsLable== true){
+
             String Aa = first;  //kunal:
             int n = Aa.length(); //6
             String[] arrayA = Aa.split(""); //[k,u,n,a,l,:]
             String collen = arrayA[n-1]; //5th =:
+
             if(collen==":"){
                 String label = Aa.substring(0, n-1);
+
                 for(int ii=0; ii<A.length; ii++)
                 {
+
                     if(label.equals(A[ii])){
 //                        System.out.println("You cannot use this Label");
                         IsTypo = true;
                         InValidLabel = true;
                     }
                 }
+
                 IsTypo = false;
             }
             else{
                 IsTypo = true;
             }
         }
+
         return typoLable;
         //If code comes here it means there's not a typo in code.
         //if IsLabel is true then there's label and arr[1] is the operator
         //otherwise arr[0] is operator
     }
 
+
     static void MisUsedVar(ArrayList<String[]> Loki){
+
         int number_of_vars =0;  //this is same as line number
+        ArrayList<String[] > vars = new ArrayList<String[] >();
+
         //{"X", "2"}  name of label and line number
+
+
+        //making the arraylist of variables
         int ii;
         int jj =0;
         String var = "var";
@@ -394,44 +581,183 @@ class main88{
 
         for(ii=0; ii<Loki.size(); ii++){
 
-//            String[]
-//            String prev = Loki.get(ii)[0];
+            String[] tomAndJerry = new String[2];    //{"X", "2"}
+
             String curr = Loki.get(ii)[0];
+
             if(curr==var){
-//                variables.add(Loki.get(ii)[1]); //this will add X; (var X)
+
+                tomAndJerry[0] = Loki.get(ii)[1];
+                String num_before_hlt = Integer.toString(ii);
+                tomAndJerry[1] = num_before_hlt;
+
+                vars.add(tomAndJerry); //this will add X; (var X)
 
             }  else{
                 jj=ii;
+                // System.out.println("this is number of variables " + jj);
                 break;  //this loop will break when they stop entering vars
             }
         }
         //now jj in the number of line after they've stop giving vars
         //to check weather they gave vars after that i.e. illigal use of vars.
-
-
+//        System.out.println("we calculated the number of vars");
         for(int k =jj+1; k<Loki.size(); k++ )
         {
             String curr = Loki.get(k)[0];
+
             if(curr==var){
-                System.out.println("var not used at the beginning");
+
+//                System.out.println("var not used at the beginning, this illigal var is used at line number = " + k);
                 VarError = true;
+                doWeStop= true;
                 break;
             }
+
             else{
-                //Else there's no variables in the program
+                VarError = false;
+            }
+        }
+//        System.out.println("there's no other variables");
+//      6  0 var x
+//      7  1 var y
+//      8  2 var z
+//      0  3 cmp R1 R2        jj = 3
+//      1  4 mov R3 FLAGS
+//      2  5 jgt label
+//      3  6 cmp R3 R4
+//      4  7 move r1 r3
+//      5  8 label: hlt
+
+        //total instruction = length 0f Loki
+        //Loki.size = 9
+        //jj = 3
+        //so there are jj number of vars
+        //so now numbering of instruction i.e. number of cmp R1 R2 will be consider 0
+        //so size - jj is 6
+        //so memory address of first var will be 6
+
+        //now we have [{"x", "0"},{"y", "1"},{"z", "2"}]
+        //adding size-jj to all above
+
+        number_of_vars = jj;
+
+        int size_Loki = Loki.size();
+        int adder_to_tomandjerry = size_Loki - jj;
+
+
+        for(int i =0; i<vars.size(); i++)
+        {
+            String[] adding_to_variables = new String[2];
+
+            String[] indi_vars = vars.get(i); // {"X", "2"}
+            //now adding adder_to_tomandjerry to 2
+//            int line_number = indi_variables[1];
+
+            int num = Integer.parseInt(indi_vars[1]);
+
+            String var_name = indi_vars[0];
+            int line_of_var = num + adder_to_tomandjerry;
+            adding_to_variables[0] = var_name;
+            adding_to_variables[1] = Integer.toString(line_of_var);
+
+            variables.add(adding_to_variables);
+        }
+
+//        System.out.println("we added variables in that ArrayList");
+    }
+
+    static void here_goes_hlt(ArrayList<String[]> Loki){
+        int size_loki = Loki.size();
+        boolean hlt_received = false;
+        for(int i =0; i<Loki.size(); i++)
+        {
+            String[] arr = Loki.get(i);
+
+            //if there's a hlt in the Loki then the size of arr must be either 1 or 2.
+            //if size if 1 then it must be hlt
+            //if size if 2 then it can be other functions also so we will check for label
+
+            int size_arr = arr.length;
+
+            if(size_arr<=2){
+                if(size_arr==1){
+                    //This one must be hlt
+                    //we have already checked for error in command's name in the function labels_with_memory_maker
+                        if(i+1 != size_loki){
+                            //this means that hlt is not at the end so
+                            doWeStop = true;
+                            break;
+                        } else{
+                            //so this means it's at the end and making
+                            if(hlt_received == true)
+                            {
+                                //it means that hlt is already in above function
+                                doWeStop = true;
+                                break;
+                            } else{
+                                //hlt is not recived before so making it true
+                                hlt_received = true;
+                            }
+                        }
+
+                }
+                else if(size_arr ==2){
+
+                    //now this can be anything so we will check wheather it's hlt with label or not
+                    //so if arr[1] is hlt then there's hlt with label
+                    //other wise it's another function
+
+                    if(arr[1]!= "hlt"){
+                        continue;
+                    } else if(arr[1]=="hlt"){
+
+                        if(i+1 != size_loki){
+                            //this means that hlt is not at the end so
+                            doWeStop = true;
+                            break;
+                        } else{
+                            if(hlt_received == true)
+                            {
+                                //it means that hlt is already in above function
+                                doWeStop = true;
+                                break;
+                            } else{
+                                //hlt is not recived before so making it true
+                                hlt_received = true;
+                            }
+                        }
+
+                    }
+                }
+
             }
         }
     }
 
+// In MisUsedVariable we assumed that there's only one hlt function and made the variabels
+// In labbels_with_memory_maker we used the number_of_variables's value that we got from above function
+
+// In here_goes_hlt we made checked for double hlt function if there's some error in hlt it would mean that
+// there's error in variabels it would mean that there's error in checking label it would mean there's error in checking hlt
+//and we are in loop
+// for this to end we have to enter values and check
+
+
+
+
     public static void main(String[] args) throws Exception {
-//        FileReader reader = new FileReader("D:\\Sem_2\\CO\\assignment1\\Simple-Assembler\\input.txt");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        FileReader reader = new FileReader("D:\\Downloads\\CO_M21_Assignment-main\\CO_M21_Assignment-main\\Simple-Assembler\\input.txt");
+        BufferedReader br = new BufferedReader(reader);
 
         String str = " ";
 
         int count_line = 0;
 
         ArrayList<String[]> Loki = new ArrayList<String[]>();
+        for(int x=0; x<256; x++){
+            range[x]=x;
+        }
 
         //Giving as a good array
         while ((str = br.readLine()) != null) {
@@ -472,18 +798,63 @@ class main88{
             count_line += 1;
             // System.out.println();
         }
-
+        // System.out.println(Loki.size());
         //Loki is here.
 
-        int iii =0;
-        for(iii=0; iii<Loki.size(); iii++)
-        {
-            String[] indiviual_arr = Loki.get(iii);
-            boolean doWeStop = CheckForRun(indiviual_arr, Loki);
-            if(doWeStop==true){
-                break;
-            }
+//        System.out.println("code starts from here");
 
+        //After MisUsedVar will come labels_with_memory_maker this,
+        //that also will implemented same as MisUsedVar.
+        //First run that function and check for doWeStop
+        //And After that we will check for hlt same as above method
+        //if Loki passes all three function then we will run the programm
+
+        MisUsedVar(Loki);
+//        System.out.println("did we reach here");
+//        System.out.println(doWeStop);
+
+        if(doWeStop == false) {
+//            System.out.println("this is after MisUsedVar");
+
+            labels_with_memory_maker(Loki);
+
+//            System.out.println("this is after label maker");
+
+//            System.out.println(doWeStop);
+                if(doWeStop == false) {
+
+//                    System.out.println("so label maker went well");
+
+//                    System.out.println("this is before hlt");
+                    here_goes_hlt(Loki);
+//                    System.out.println("this is after hlt");
+//                    System.out.println("knew it");
+//                    System.out.println(doWeStop);
+                    if(doWeStop == false) {
+
+//                        System.out.println("enter the dragon");
+                        int iii = 0;
+                        for (iii = 0; iii < Loki.size(); iii++) {
+
+//                            System.out.println("where did it happed bro");
+
+                            String[] indiviual_arr = Loki.get(iii);
+
+                            boolean doWeStop = CheckForRun(indiviual_arr, Loki);
+
+//                            System.out.println("after checkfor run");
+
+//                            System.out.println(doWeStop);
+
+                            if (doWeStop == true) {
+//                                System.out.println("line number is = "  +iii );
+//                                System.out.println("here it did happen");
+                                break;
+                            }
+
+                        }
+                    }
+                }
         }
 
         br.close();
