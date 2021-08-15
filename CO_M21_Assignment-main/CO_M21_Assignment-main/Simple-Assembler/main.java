@@ -981,12 +981,20 @@ class main8{
         }
     }
 
+// In MisUsedVariable we assumed that there's only one hlt function and made the variabels
+// In labbels_with_memory_maker we used the number_of_variables's value that we got from above function
+
+// In here_goes_hlt we made checked for double hlt function if there's some error in hlt it would mean that
+// there's error in variabels it would mean that there's error in checking label it would mean there's error in checking hlt
+//and we are in loop
+// for this to end we have to enter values and check
+
 
 
 
     public static void main(String[] args) throws Exception {
         // FileReader reader = new FileReader("D:\\Sem_2\\CO\\assignment1\\Simple-Assembler\\input.txt");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); 
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 
         for(int ijj =0; ijj <=255; ijj++){
@@ -1015,29 +1023,37 @@ class main8{
             //splitting intiated
             int i=0;
 
-            while(str.substring(i, i+1).equals(" ")){
-                i++;
-            }
+//            while(str.substring(i, i+1).equals(" ") ){
+//                i++;
+//            }
 
-            str=str.substring(i);
+//            str=str.substring(i);
 
-            String[] ar = str.split(" ", 0);
-            //splitting done
-            String[] arr = new String[ar.length];
+//            String[] ar = str.split(" ", 0);
+//            //splitting done
+//            String[] arr = new String[ar.length];
+//
+//            int j=0;
+//
+//            for(i=0; i<ar.length; i++){
+//                if(ar[i].trim().length() == 0){
+//                    // System.out.println("blank");
+//                    continue;
+//                }
+//                else{
+//                    arr[j]=ar[i];
+//                    // System.out.println("inside loop "+arr[j]);
+//                    j++;
+//                }
+//            }
 
-            int j=0;
+            str = str.replaceAll("\t", " ");
+            str = str.trim();
+            
+            str = str.replaceAll("( )+", " ");
 
-            for(i=0; i<ar.length; i++){
-                if(ar[i].trim().length() == 0){
-                    // System.out.println("blank");
-                    continue;
-                }
-                else{
-                    arr[j]=ar[i];
-                    // System.out.println("inside loop "+arr[j]);
-                    j++;
-                }
-            }
+            String[]  arr = str.split(" ");
+
             Loki.add(arr);
             count_line += 1;
             // System.out.println();
