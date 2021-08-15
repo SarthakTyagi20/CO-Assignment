@@ -100,6 +100,7 @@ class main8{
                 op[1] = "B";
             }
             else{
+
                 op[0] = "00011";
                 op[1] = "C";
             }
@@ -189,10 +190,18 @@ class main8{
 
         String display = "";
         display = display + op[0] + "00";
+
         String r0 = Rcode(arr[1]);
         String r1 = Rcode(arr[2]);
         String r2 = Rcode(arr[3]);
+
         if((r0.equals("wrong reg"))||(r1.equals("wrong reg"))||(r2.equals("wrong reg"))){
+            System.out.println("Syntax Error in instruction");
+            return;
+        }
+        if((r0.equals("111"))||(r1.equals("111"))||(r2.equals("111"))){
+            System.out.println("Illegal use of FLAGS register");
+            doWeStop = true;
             return;
         }
 
@@ -200,22 +209,7 @@ class main8{
         System.out.println(display);
     }
 
-//    static void FinalB(String[] op, String[] arr ){
-//
-//        String display = "";
-//        display = display + op[0];
-//        String r0 = Rcode(arr[1]);
-//        int num = Integer.parseInt(arr[2].substring(1));
-//        //ADD ERROR FOR $
-//
-//        String imm = Integer.toBinaryString(num);
-//        int x= imm.length();
-//        for(int d=8-x; d>0; d--){
-//            imm="0"+imm;
-//        }
-//        display = display + r0 + imm;
-//        System.out.println(display);
-//    }
+
 
     static void FinalB(String[] op, String[] arr){
 
@@ -226,11 +220,27 @@ class main8{
         String r0 = Rcode(arr[1]);
 
 
+
 //        System.out.println(r0);
         if(r0.equals("wrong reg")){
+            System.out.println("Syntax Error in instruction");
+            return;
+        }
+        if(r0.equals("111")){
+            System.out.println("Illegal use of FLAGS register");
+            doWeStop = true;
             return;
         }
         //ADD ERROR FOR $
+        String r1 = arr[2].substring(1);
+        boolean is_float = true;
+        for(int ji =0; ji<256; ji++)
+        {
+            if(r1.equals(range[ji])){
+                is_float = false;
+                break;
+            }
+        }
         if(arr[2].charAt(0)!='$'){
 
             System.out.println("Error! $ not inserted before an immediate value");
@@ -238,6 +248,14 @@ class main8{
             doWeStop=true;
             return;
         }
+        if(is_float==true)
+        {
+            System.out.println("Invalid immediate. It should be an Integer in range [0,255]");
+            doWeStop = true;
+            return;
+        }
+
+
         int num = Integer.parseInt(arr[2].substring(1));
         if((num<0)||(num>255)){
             System.out.println("Error! the number inserted is out of range");
@@ -259,12 +277,27 @@ class main8{
         String str = "";
         str = str + op[0];
         str = str + "00000";
+
+        String flag = "FLAGS";
         String reg1 = Rcode(arr[1]);
+
         String reg2 = Rcode(arr[2]);
-        if((reg1.equals("wrong reg"))||(reg2.equals("wrong reg"))){
-//            System.out.println("#########################");
+        String  flag_arr = arr[2];
+
+        if(reg1.equals("111")){
+            System.out.println("Illegal use of FLAGS register");
+            doWeStop = true;
             return;
         }
+
+        if((reg1.equals("wrong reg")) || (reg2.equals("wrong reg"))){
+//            System.out.println("#########################");
+            System.out.println("Syntax Error in instruction");
+            return;
+        }
+
+
+
 //        System.out.println("####################");
 //        System.out.println(reg1);
 //        System.out.println(reg2);
@@ -279,6 +312,12 @@ class main8{
         str = str + op[0];
         String reg1 = Rcode(arr[1]);
         if(reg1.equals("wrong reg")){
+            System.out.println("Syntax Error in instruction");
+            return;
+        }
+        if(reg1.equals("111")){
+            System.out.println("Illegal use of FLAGS register");
+            doWeStop = true;
             return;
         }
         str = str + reg1;
@@ -310,40 +349,7 @@ class main8{
         System.out.println(str);
     }
 
-    // static void FinalD(String [] op , String [] arr){
-    //     System.out.println("entering final d");
-    //     String str = "";
-    //     str = str + op[0];
-    //     // str = str + Rcode(arr[1]);
-    //     System.out.println(arr[1]);
-    //     String r0 = Rcode(arr[1]);
-    //     System.out.println("r0r0r0r0r0r0r0 " + r0);
-    //     if(r0.equals("wrong reg")){
-    //         System.out.println("%%%%%%%%%%%");
-    //         return;
-    //     }
-    //     String var = arr[2];
-    //     int idx_var_present = -1;
-    //     boolean notPresent = true;
-    //     for(int i =0 ; i<variables.size() ; i++){
-    //         if(var == variables.get(i)[0]){
-    //             notPresent = false;
-    //             idx_var_present = i;
-    //             break;
-    //         }
-    //     }
-    //     if(!notPresent){
-    //         int var_value_decimal = Integer.parseInt(variables.get(idx_var_present)[1]);
-    //         String var_value_binary = Integer.toBinaryString(var_value_decimal);
-    //         str = str + var_value_binary;
-    //         System.out.println(str);
-    //     } else{
-    //         doWeStop = true;
-    //         System.out.println(doWeStop+ "%%%%%%%%%%%%%");
-    //         System.out.println("use of undefinded variable is prohibited");
-    //     }
-    //     System.out.println();
-    // }
+
 
     static void FinalE(String [] op , String [] arr){
         String str = "";
@@ -390,26 +396,55 @@ class main8{
         String op[];
         op = OPcode(arr);
         String type = op[1];
-
+        int arr_size = arr.length;
 //        System.out.println("string type = " +type);
         if(type == "A"){
+            if(arr_size!= 4){
+                doWeStop = true;
+                System.out.println("Syntax Error in the instruction.");
+                return;
+            }
             FinalA(op, arr);
         }
         if(type == "B"){
-
+            if(arr_size!= 3){
+                doWeStop = true;
+                System.out.println("Syntax Error in the instruction.");
+                return;
+            }
             // System.out.println("entering the final B");
             FinalB(op, arr);
         }
         if(type == "C"){
+            if(arr_size!= 3){
+                doWeStop = true;
+                System.out.println("Syntax Error in the instruction.");
+                return;
+            }
             FinalC(op, arr);
         }
         if(type == "D"){
+            if(arr_size!= 3){
+                doWeStop = true;
+                System.out.println("Syntax Error in the instruction.");
+                return;
+            }
             FinalD(op, arr);
         }
         if(type == "E"){
+            if(arr_size!= 2){
+                doWeStop = true;
+                System.out.println("Syntax Error in the instruction.");
+                return;
+            }
             FinalE(op, arr);
         }
         if(type == "F"){
+            if(arr_size!= 1){
+                doWeStop = true;
+                System.out.println("Syntax Error in the instruction.");
+                return;
+            }
 //            System.out.println("****");
             FinalF();
         }
@@ -421,6 +456,8 @@ class main8{
     static ArrayList<String[]> variables = new ArrayList<String[]>();  //this vairble's any element will be {"X", "2"} = tomAndJerry
     static int number_of_vars;
     static int count_lines;
+    static  String[] range = new String[256];
+
 
     static boolean CheckForRun(String[] arr,ArrayList<String[]> Loki ){
 
@@ -478,6 +515,7 @@ class main8{
 
 
 //        System.out.println("after this is full final");
+
         FullFinal(arr);
 //        System.out.println("2222222222222222222");
 
@@ -497,7 +535,7 @@ class main8{
 //        System.out.println("-----------------");
 
         boolean InValidLabel_for_loki = false;
-
+//        System.out.println(Loki.size());
         for(int ii=0; ii<Loki.size(); ii++)
         {
             String[] arr = Loki.get(ii); //{"label:", "add", "reg0","reg1","reg2"}
@@ -506,9 +544,15 @@ class main8{
             String A[] = {"add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls",
                     "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je", "hlt", "var"};
             int an = A.length;
+
+//            System.out.println("////////////////");
+//            System.out.println(arr.length);
 //            System.out.println(arr[0]);
+//            System.out.println(arr[1]);
+
+
             String first = arr[0];
-//            String second = arr[1];
+//
             boolean second_syntax_error = false;
 
             boolean IsLable = true;  //if there's a label than true else flase
@@ -559,6 +603,9 @@ class main8{
                             IsTypo = true;
                             InValidLabel = true;
                             InValidLabel_for_loki = true;
+
+                            System.out.println("Line number = " + (ii+1));
+                            System.out.println("You cannot use this label. Illigal Label name.");
                             doWeStop = true;
 
                             System.out.println("line number 408's doWeStop = " + doWeStop);
@@ -597,6 +644,8 @@ class main8{
 
                         if(second_syntax_error == false)
                         {
+                            System.out.println("Line number " + (ii+1));
+                            System.out.println("Error!!! There is typo in instruction name.");
                             doWeStop = true;
                             break;
                             //this means after label the syntax of operator is not correct
@@ -615,6 +664,8 @@ class main8{
                     }
                     else{
 //                        System.out.println("%%%%%%%%%%%%%%%");
+                        System.out.println("Line number " + (ii+1));
+                        System.out.println("Error!!! There's typo in label.");
                         doWeStop = true;
                         break;
                     }
@@ -623,9 +674,12 @@ class main8{
 
                 }
                 else{
+                    System.out.println("Line number " + (ii+1));
+                    System.out.println("Error!!! Sytax error in label declaration.");
 //                    System.out.println("ttttttttttttttttttttttttttttt");
                     InValidLabel_for_loki = true;
                     IsTypo = true;
+
                     doWeStop = true;
                 }
             }
@@ -760,14 +814,16 @@ class main8{
         // to check weather they gave vars after that i.e. illigal use of vars.
 //        System.out.println("we calculated the number of vars");
 
-        for(int k =jj+1; k<Loki.size(); k++ )
+        for(int k =jj; k<Loki.size(); ++k )
         {
             String curr = Loki.get(k)[0];
 
-            if(curr==var){
+            if(curr.equals(var)){
 
 //                System.out.println("var not used at the beginning, this illigal var is used at line number = " + k);
                 VarError = true;
+                System.out.println("there's a variabel on line " + (k+1)  );
+                System.out.println("All variable must be declared at the begining");
                 doWeStop= true;
                 break;
             }
@@ -780,9 +836,11 @@ class main8{
 //      6  0 var x
 //      7  1 var y
 //      8  2 var z
+
 //      0  3 cmp R1 R2        jj = 3
-//      1  4 mov R3 FLAGS
+//      1  4 var k            k =4
 //      2  5 jgt label
+
 //      3  6 cmp R3 R4
 //      4  7 move r1 r3
 //      5  8 label: hlt
@@ -808,6 +866,7 @@ class main8{
         int size_Loki = Loki.size();
         int adder_to_tomandjerry = size_Loki - jj;
 //        System.out.println("----- "+ adder_to_tomandjerry);
+
 
 
         for(int i =0; i<vars.size(); i++)
@@ -854,6 +913,9 @@ class main8{
                     //we have already checked for error in command's name in the function labels_with_memory_maker
                         if(i+1 != size_loki){
                             //this means that hlt is not at the end so
+                            System.out.println("Line number " + (i+1));
+                            System.out.println("hlt NOT used at the end.");
+                            hlt_received = true;
                             doWeStop = true;
                             break;
                         } else{
@@ -861,6 +923,8 @@ class main8{
                             if(hlt_received == true)
                             {
                                 //it means that hlt is already in above function
+                                System.out.println("Line number "+ (i+1));
+                                System.out.println("There's already a hlt in function.");
                                 doWeStop = true;
                                 break;
                             } else{
@@ -876,18 +940,23 @@ class main8{
                     //so if arr[1] is hlt then there's hlt with label
                     //other wise it's another function
 
-                    if(arr[1]!= "hlt"){
+                    if(!arr[1].equals("hlt")){
                         continue;
-                    } else if(arr[1]=="hlt"){
+                    } else if(arr[1].equals("hlt")){
 
                         if(i+1 != size_loki){
+                            hlt_received = true;  //QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
                             //this means that hlt is not at the end so
+                            System.out.println("Line number " + (i+1));
+                            System.out.println("hlt NOT used at the end.");
                             doWeStop = true;
                             break;
                         } else{
                             if(hlt_received == true)
                             {
                                 //it means that hlt is already in above function
+                                System.out.println("Line number "+ (i+1));
+                                System.out.println("There's already a hlt in function.");
                                 doWeStop = true;
                                 break;
                             } else{
@@ -898,25 +967,35 @@ class main8{
 
                     }
                 }
-
             }
+
+        }
+        if(hlt_received==true){
+
+        } else{
+            int n = Loki.size() + 1;
+            System.out.println("Line number " +n);
+            System.out.println("Missing hlt instruction");
+            doWeStop = true;
+
         }
     }
-
-// In MisUsedVariable we assumed that there's only one hlt function and made the variabels
-// In labbels_with_memory_maker we used the number_of_variables's value that we got from above function
-
-// In here_goes_hlt we made checked for double hlt function if there's some error in hlt it would mean that
-// there's error in variabels it would mean that there's error in checking label it would mean there's error in checking hlt
-//and we are in loop
-// for this to end we have to enter values and check
 
 
 
 
     public static void main(String[] args) throws Exception {
         // FileReader reader = new FileReader("D:\\Sem_2\\CO\\assignment1\\Simple-Assembler\\input.txt");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); 
+
+
+        for(int ijj =0; ijj <=255; ijj++){
+
+            String  a = Integer.toString(ijj);
+            range[ijj] = a;
+
+
+        }
 
         String str = " ";
 
@@ -1007,13 +1086,14 @@ class main8{
                             String[] indiviual_arr = Loki.get(iii);
 
                             boolean doWeStop = CheckForRun(indiviual_arr, Loki);
+
 //                            System.out.println(doWeStop+"^^^^^^^^^^^^");
 //                            System.out.println("after checkfor run");
 //                            System.out.println("0000000000000000");
 //                            System.out.println(doWeStop);
 
                             if (doWeStop == true) {
-//                                System.out.println("line number is = "  +iii );
+                                System.out.println("Line number is "  +(iii+1) );
 //                                System.out.println("here it did happen");
                                 break;
                             }
