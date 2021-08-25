@@ -1,13 +1,8 @@
-//import org.w3c.dom.ls.LSOutput;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.InputStreamReader;
+import java.io.*;
+// import java.io.BufferedReader;
+// import java.io.FileReader;
 import java.util.ArrayList;
 
-
-
-// import java.io.*;
 
 class main8{
 
@@ -324,7 +319,7 @@ class main8{
         int num=0;
         int flag=0;
         for(int i=0; i<variables.size(); i++){
-            
+
             String c = variables.get(i)[0];  //variable's name from our list
             String varvarvar = arr[2];   //variable's name
 
@@ -445,7 +440,7 @@ class main8{
                 System.out.println("Syntax Error in the instruction.");
                 return;
             }
-//            System.out.println("****");
+//            System.out.println("**");
             FinalF();
         }
     }
@@ -541,8 +536,10 @@ class main8{
             String[] arr = Loki.get(ii); //{"label:", "add", "reg0","reg1","reg2"}
 
             //here we will check label is correct or not i.e. is there collen at the end?
-            String A[] = {"add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls",
-                    "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je", "hlt", "var"};
+            String A[] = {"add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls", "var",
+                    "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je", "hlt"};
+            String AA[] = {"add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls", "var",
+                    "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je", "hlt", "R0","R1","R2","R3","R4","R5","R6","FLAGS"};
             int an = A.length;
 
 //            System.out.println("////////////////");
@@ -574,7 +571,7 @@ class main8{
                 }
             }
 //            System.out.println("this is Label + " + IsLable);
-//            System.out.println("~~~~~~~~");
+//            System.out.println("~~~~");
 //            System.out.println(IsLable);
 
             if(IsLable == true){
@@ -595,30 +592,39 @@ class main8{
                     String label = Aa.substring(0, n-1);
                     //checking if label is made of any commands like add, mul or div
 
-                    for(int iii=0; iii<A.length; iii++)
+                    for(int iii=0; iii<AA.length; iii++)
                     {
 
-                        if(label.equals(A[iii])){
+                        if(label.equals(AA[iii])){
 //                            System.out.println("You cannot use this Label");
                             IsTypo = true;
                             InValidLabel = true;
                             InValidLabel_for_loki = true;
 
                             System.out.println("Line number = " + (ii+1));
-                            System.out.println("You cannot use this label. Illigal Label name.");
+                            System.out.println("You cannot use this label. Illegal Label name.");
                             doWeStop = true;
 
-                            System.out.println("line number 408's doWeStop = " + doWeStop);
+
                             break;
 
                         }
 
+
+                    }
+                    if(IsLable == true && InValidLabel == true && InValidLabel_for_loki == true){
+                        break;
                     }
 
 //                    System.out.println(doWeStop);
 //                    System.out.println("^^^^^^^^^^^^^^^^^^");
 //                    System.out.println(InValidLabel_for_loki);
-
+                    if(arr.length == 1){
+                        System.out.println("Line number " + (ii +1));
+                        System.out.println("Syntax error in label.");
+                        doWeStop = true;
+                        break;
+                    }
                     if(InValidLabel_for_loki == false){
 
 
@@ -655,6 +661,17 @@ class main8{
 
                         String[] label_memory = new String[2];
 //                        System.out.println("NNNNNNNNNNNNNNNNN");
+
+                        for(int rk =0 ; rk<labels_with_memory.size(); rk++){
+                            String label_name = labels_with_memory.get(rk)[0];
+
+                            if(label.equals(label_name)){
+                                System.out.println("Error!! This label is already defined before. Line number " + (ii+1));
+                                doWeStop = true;
+                                break;
+                            }
+                        }
+
                         label_memory[0] = label;
 //                        System.out.println(label);
                         label_memory[1] = Integer.toString(ii-number_of_vars);
@@ -681,6 +698,7 @@ class main8{
                     IsTypo = true;
 
                     doWeStop = true;
+                    break;
                 }
             }
 
@@ -699,7 +717,7 @@ class main8{
         String A[] = {"add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls", "var",
                 "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je", "hlt"};
         int an = A.length;
-        String B[] = {"reg0","reg1","reg2","reg3","reg4","reg5","reg6","FLAGS"};
+//        String B[] = {"reg0","reg1","reg2","reg3","reg4","reg5","reg6","FLAGS"};
         //Two conditions either there's  a Lable or Not
 
         //arr[0] will be either lable or command
@@ -749,10 +767,11 @@ class main8{
 //                        System.out.println("You cannot use this Label");
                         IsTypo = true;
                         InValidLabel = true;
+                        break;
                     }
                 }
 
-                IsTypo = false;
+//                IsTypo = false;
             }
             else{
 //                System.out.println("33333333333333333");
@@ -773,29 +792,40 @@ class main8{
         //if IsLabel is true then there's label and arr[1] is the operator
         //otherwise arr[0] is operator
     }
+    //took a reference for this function from https://www.baeldung.com/java-check-string-number
+    static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
 
-
-    static void MisUsedVar(ArrayList<String[]> Loki){
+    static void MisUsedVar(ArrayList<String[]> Loki) {
 
 //        int number_of_vars =0;  //this is same as line number
-        ArrayList<String[] > vars = new ArrayList<String[] >();
+        ArrayList<String[]> vars = new ArrayList<String[]>();
 
         //{"X", "2"}  name of label and line number
 
 
         //making the arraylist of variables
         int ii;
-        int jj =0;
+        int jj = 0;
         String var = "var";
         boolean VarError = false;
 
-        for(ii=0; ii<Loki.size(); ii++){
+        for (ii = 0; ii < Loki.size(); ii++) {
 
             String[] tomAndJerry = new String[2];    //{"X", "2"}
 
             String curr = Loki.get(ii)[0];
 
-            if(curr.equals("var")){
+            if (curr.equals(var)) {
 //                System.out.println("''''''''''''''''''");
                 tomAndJerry[0] = Loki.get(ii)[1];
                 String num_before_hlt = Integer.toString(ii);
@@ -803,8 +833,8 @@ class main8{
 
                 vars.add(tomAndJerry); //this will add X; (var X)
 
-            }  else{
-                jj=ii;
+            } else {
+                jj = ii;
 //                System.out.println("this is number of variables " + jj+1);
                 break;  //this loop will break when they stop entering vars
             }
@@ -814,22 +844,50 @@ class main8{
         // to check weather they gave vars after that i.e. illigal use of vars.
 //        System.out.println("we calculated the number of vars");
 
-        for(int k =jj; k<Loki.size(); ++k )
-        {
+        for (int k = jj; k < Loki.size(); ++k) {
             String curr = Loki.get(k)[0];
 
-            if(curr.equals(var)){
+            if (curr.equals(var)) {
 
 //                System.out.println("var not used at the beginning, this illigal var is used at line number = " + k);
                 VarError = true;
-                System.out.println("there's a variabel on line " + (k+1)  );
+                System.out.println("there's a variabel on line " + (k + 1));
                 System.out.println("All variable must be declared at the begining");
-                doWeStop= true;
+                doWeStop = true;
                 break;
             }
 
-            else{
-                VarError = false;
+
+        }
+        String A[] = {"add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls", "var",
+                "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je", "hlt", "R0","R1","R2","R3","R4","R5","R6","FLAGS"};
+
+        if(VarError == false){
+            for(int i =0; i<vars.size(); i++ ){
+                //i = tomAndJerry
+
+                String[]  tomJerry = vars.get(i);
+                String var_name = tomJerry[0];
+
+                for(int j =0; j<A.length; j++){
+                    if(var_name.equals(A[j])){
+                        VarError = true;
+                        doWeStop = true;
+                        break;
+
+                    }
+                    if(isNumeric(var_name)){
+                        VarError = true;
+                        doWeStop= true;
+                        break;
+                    }
+                }
+                if(VarError==true){
+                    System.out.println("Error!! Illegal use of Variable name on line "+ (i+1));
+                    doWeStop = true;
+                    break;
+                }
+
             }
         }
 //        System.out.println("there's no other variables");
@@ -859,41 +917,49 @@ class main8{
 
 //        System.out.println("///////////////" + number_of_vars);
 
-
-         number_of_vars = jj;
+        if (VarError == false) {
+            number_of_vars = jj;
 //        System.out.println( number_of_vars);
 //        System.out.println("Loki size = "+ Loki.size());
-        int size_Loki = Loki.size();
-        int adder_to_tomandjerry = size_Loki - jj;
+            int size_Loki = Loki.size();
+            int adder_to_tomandjerry = size_Loki - jj;
 //        System.out.println("----- "+ adder_to_tomandjerry);
 
 
+            for (int i = 0; i < vars.size(); i++) {
+                String[] adding_to_variables = new String[2];
 
-        for(int i =0; i<vars.size(); i++)
-        {
-            String[] adding_to_variables = new String[2];
-
-            String[] indi_vars = vars.get(i); // {"X", "2"}
-            //now adding adder_to_tomandjerry to 2
+                String[] indi_vars = vars.get(i); // {"X", "2"}
+                //now adding adder_to_tomandjerry to 2
 //            int line_number = indi_variables[1];
 
-            int num = Integer.parseInt(indi_vars[1]);
+                int num = Integer.parseInt(indi_vars[1]);
 
-            String var_name = indi_vars[0];
-            int line_of_var = num + adder_to_tomandjerry;
-            // System.out.println(line_of_var);
-            adding_to_variables[0] = var_name;
-            adding_to_variables[1] = Integer.toString(line_of_var);
+                String var_name = indi_vars[0];
+                int line_of_var = num + adder_to_tomandjerry;
+                // System.out.println(line_of_var);
 
-            variables.add(adding_to_variables);
-        }
+                for(int rk =0; rk<variables.size(); rk++){
+                    if(var_name.equals(variables.get(rk)[0])){
+                        System.out.println("Error!! Can't repeat names of the variables. Line number " + (i+1));
+                        doWeStop = true;
+                        break;
+                    }
+                }
+
+                adding_to_variables[0] = var_name;
+                adding_to_variables[1] = Integer.toString(line_of_var);
+
+                variables.add(adding_to_variables);
+            }
 
 //        System.out.println("sizzzzzzz "+ variables.size());
 //        String[] arr = variables.get(0);
 //        System.out.println(variables.get(0)[0] + " " + variables.get(0)[1]);
 //        System.out.println("we added variables in that ArrayList");
-    }
 
+        }
+    }
     static void here_goes_hlt(ArrayList<String[]> Loki){
         int size_loki = Loki.size();
         boolean hlt_received = false;
@@ -908,30 +974,30 @@ class main8{
             int size_arr = arr.length;
 
             if(size_arr<=2){
-                if(size_arr==1){
+                if((size_arr==1) && (arr[0].equals("hlt")) ){
                     //This one must be hlt
                     //we have already checked for error in command's name in the function labels_with_memory_maker
-                        if(i+1 != size_loki){
-                            //this means that hlt is not at the end so
-                            System.out.println("Line number " + (i+1));
-                            System.out.println("hlt NOT used at the end.");
-                            hlt_received = true;
+                    if(i+1 != size_loki){
+                        //this means that hlt is not at the end so
+                        System.out.println("Line number " + (i+1));
+                        System.out.println("hlt NOT used at the end.");
+                        hlt_received = true;
+                        doWeStop = true;
+                        break;
+                    } else{
+                        //so this means it's at the end and making
+                        if(hlt_received == true)
+                        {
+                            //it means that hlt is already in above function
+                            System.out.println("Line number "+ (i+1));
+                            System.out.println("There's already a hlt in function.");
                             doWeStop = true;
                             break;
                         } else{
-                            //so this means it's at the end and making
-                            if(hlt_received == true)
-                            {
-                                //it means that hlt is already in above function
-                                System.out.println("Line number "+ (i+1));
-                                System.out.println("There's already a hlt in function.");
-                                doWeStop = true;
-                                break;
-                            } else{
-                                //hlt is not recived before so making it true
-                                hlt_received = true;
-                            }
+                            //hlt is not recived before so making it true
+                            hlt_received = true;
                         }
+                    }
 
                 }
                 else if(size_arr ==2){
@@ -993,7 +1059,8 @@ class main8{
 
 
     public static void main(String[] args) throws Exception {
-        // FileReader reader = new FileReader("D:\\Sem_2\\CO\\assignment1\\Simple-Assembler\\input.txt");
+        //  FileReader reader = new FileReader("D:\\Sem_2\\CO\\assignment1\\SimpleSimulator\\src\\input33.txt");
+        
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 
@@ -1049,7 +1116,7 @@ class main8{
 
             str = str.replaceAll("\t", " ");
             str = str.trim();
-            
+
             str = str.replaceAll("( )+", " ");
 
             String[]  arr = str.split(" ");
@@ -1087,36 +1154,36 @@ class main8{
 //                    System.out.println("so label maker went well");
 
 //                    System.out.println("this is before hlt");
-                    here_goes_hlt(Loki);
+                here_goes_hlt(Loki);
 //                    System.out.println("this is after hlt");
 //                    System.out.println("knew it");
 //                    System.out.println(doWeStop);
-                    if(doWeStop == false) {
+                if(doWeStop == false) {
 //                        System.out.println(Loki.size());
 //                        System.out.println("enter the dragon");
-                        int iii = 0;
-                        for (iii = 0; iii < Loki.size(); iii++) {
+                    int iii = 0;
+                    for (iii = 0; iii < Loki.size(); iii++) {
 
 //                            System.out.println("where did it happed bro");
 
-                            String[] indiviual_arr = Loki.get(iii);
+                        String[] indiviual_arr = Loki.get(iii);
 
-                            boolean doWeStop = CheckForRun(indiviual_arr, Loki);
+                        boolean doWeStop = CheckForRun(indiviual_arr, Loki);
 
 //                            System.out.println(doWeStop+"^^^^^^^^^^^^");
 //                            System.out.println("after checkfor run");
 //                            System.out.println("0000000000000000");
 //                            System.out.println(doWeStop);
 
-                            if (doWeStop == true) {
-                                System.out.println("Line number is "  +(iii+1) );
+                        if (doWeStop == true) {
+                            System.out.println("Line number is "  +(iii+1) );
 //                                System.out.println("here it did happen");
-                                break;
-                            }
-
+                            break;
                         }
+
                     }
                 }
+            }
         }
 
         br.close();
