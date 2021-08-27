@@ -1,7 +1,9 @@
 import java.io.*;
-// import java.io.BufferedReader;
-// import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
+
+// import jdk.internal.org.jline.utils.InputStreamReader;
 
 
 class main8{
@@ -90,6 +92,12 @@ class main8{
         }
         if (OP.equals("mov"))
         {
+            if(arr.length != 3){
+                System.out.println("Syntax error in the instruction");
+                doWeStop = true;
+                return op;
+            }
+
             if(arr[2].subSequence(0, 1).equals("$"))
             {op[0] = "00010";
                 op[1] = "B";
@@ -595,7 +603,7 @@ class main8{
                     for(int iii=0; iii<AA.length; iii++)
                     {
 
-                        if(label.equals(AA[iii])){
+                        if((label.equals(AA[iii]) )|| (!label.matches("[A-Za-z0-9_]+")) ){
 //                            System.out.println("You cannot use this Label");
                             IsTypo = true;
                             InValidLabel = true;
@@ -792,7 +800,7 @@ class main8{
         //if IsLabel is true then there's label and arr[1] is the operator
         //otherwise arr[0] is operator
     }
-    //took a reference for this function from https://www.baeldung.com/java-check-string-number
+    //https://www.baeldung.com/java-check-string-number
     static boolean isNumeric(String strNum) {
         if (strNum == null) {
             return false;
@@ -826,6 +834,15 @@ class main8{
             String curr = Loki.get(ii)[0];
 
             if (curr.equals(var)) {
+                if(Loki.get(ii).length != 2){
+                    System.out.println("Error on line number " + (ii+1));
+                    System.out.println("Syntax error in the instruction");
+
+                    doWeStop = true;
+
+                    return;
+                }
+
 //                System.out.println("''''''''''''''''''");
                 tomAndJerry[0] = Loki.get(ii)[1];
                 String num_before_hlt = Integer.toString(ii);
@@ -881,6 +898,12 @@ class main8{
                         doWeStop= true;
                         break;
                     }
+                    if(!var_name.matches("[A-Za-z0-9_]+")){
+                        VarError = true;
+                        doWeStop = true;
+                        break;
+                    }
+
                 }
                 if(VarError==true){
                     System.out.println("Error!! Illegal use of Variable name on line "+ (i+1));
@@ -1059,7 +1082,7 @@ class main8{
 
 
     public static void main(String[] args) throws Exception {
-        //  FileReader reader = new FileReader("D:\\Sem_2\\CO\\assignment1\\SimpleSimulator\\src\\input33.txt");
+        // FileReader reader = new FileReader("D:\\Sem_2\\CO\\CO-Assignment-main2\\CO_M21_Assignment-main\\CO_M21_Assignment-main\\Simple-Assembler\\input33.txt");
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
