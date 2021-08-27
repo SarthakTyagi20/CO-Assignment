@@ -1,5 +1,5 @@
 // import javax.print.DocFlavor;
-//new
+
 // import jdk.internal.org.jline.utils.InputStreamReader;
 
 // import java.awt.image.AreaAveragingScaleFilter;
@@ -181,6 +181,9 @@ public class sim {
         String reg2 = instruction.substring(10,13);
         String reg3 = instruction.substring(13);
 
+
+
+
         int Rv1 = Register_File(RF(reg1)); //R1
         int Rv2 = Register_File(RF(reg2)); //R2
         int Rv3 = Register_File(RF(reg3)); //R3
@@ -190,7 +193,16 @@ public class sim {
 
             Rv1 = Rv2 + Rv3;
             if(Rv1>65535){
+                String mem_addr = Integer.toBinaryString(Rv1);
+                int x = mem_addr.length();
 
+                for (int d = 16 - x; d > 0; d--) {
+                    mem_addr = "0" + mem_addr;
+                }
+
+                String final_ = mem_addr.substring(mem_addr.length() - 16);
+                Rv1 = Integer.parseInt(final_, 2);
+                
                 Registers_Values[7] = 8;
             } else{
                 Registers_Values[7] = 0;
@@ -201,9 +213,14 @@ public class sim {
         }
         if(operation_name.equals("sub")){
 
+
             Rv1 = Rv2 - Rv3;
+
             if(Rv1<0){
+
+                Rv1 = 0;
                 Registers_Values[7] =8;
+
             } else{
                 Registers_Values[7] = 0;
             }
@@ -216,6 +233,16 @@ public class sim {
             Rv1 = Rv2 *Rv3;
 
             if(Rv1>65535){
+                String mem_addr = Integer.toBinaryString(Rv1);
+                int x = mem_addr.length();
+
+                for (int d = 16 - x; d > 0; d--) {
+                    mem_addr = "0" + mem_addr;
+                }
+
+                String final_ = mem_addr.substring(mem_addr.length() - 16);
+                Rv1 = Integer.parseInt(final_, 2);
+                
                 Registers_Values[7] = 8;
             } else{
                 Registers_Values[7] = 0;
@@ -342,6 +369,7 @@ public class sim {
                 Registers_Values[7]=4;
             }
         }
+
         return program_counter_int + 1;
     }
 
@@ -487,8 +515,9 @@ public class sim {
     public static void main(String[] args) throws IOException {
 
 
-        // FileReader reader = new FileReader("D:\\Downloads\\CO_M21_Assignment-main\\CO_M21_Assignment-main\\SimpleSimulator\\input.txt");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        // FileReader reader = new FileReader("D:\\Sem_2\\CO\\CO-Assignment-main2\\CO_M21_Assignment-main\\CO_M21_Assignment-main\\SimpleSimulator\\input.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); 
+//        PrintWriter writer = new PrintWriter("D:\\Sem_2\\CO\\CO-Assignment-main\\CO_M21_Assignment-main\\CO_M21_Assignment-main\\SimpleSimulator\\graph.txt", "UTF-8");
 
         String str = " ";
 
@@ -527,12 +556,13 @@ public class sim {
             int line_number = execution_star(inst); //"jmp 5"
 
             printer_reg();
-
+//            writer.println(program_counter_int);
             program_counter_int = line_number;
             inst = MEM[program_counter_int];
         }
-
+//        writer.println(program_counter_int);
         Program_counter_bn(program_counter_int);
+        Registers_Values[7] = 0;
         printer_reg();
 
         for(int j=0; j<256; j++){
