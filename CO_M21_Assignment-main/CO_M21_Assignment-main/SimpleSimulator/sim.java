@@ -202,7 +202,7 @@ public class sim {
 
                 String final_ = mem_addr.substring(mem_addr.length() - 16);
                 Rv1 = Integer.parseInt(final_, 2);
-                
+
                 Registers_Values[7] = 8;
             } else{
                 Registers_Values[7] = 0;
@@ -242,7 +242,7 @@ public class sim {
 
                 String final_ = mem_addr.substring(mem_addr.length() - 16);
                 Rv1 = Integer.parseInt(final_, 2);
-                
+
                 Registers_Values[7] = 8;
             } else{
                 Registers_Values[7] = 0;
@@ -499,6 +499,7 @@ public class sim {
             }
 
             String final_ = mem_addr.substring(mem_addr.length() - 16);
+
             System.out.print(final_ + " ");
 
         }
@@ -515,9 +516,10 @@ public class sim {
     public static void main(String[] args) throws IOException {
 
 
-        // FileReader reader = new FileReader("D:\\Sem_2\\CO\\CO-Assignment-main2\\CO_M21_Assignment-main\\CO_M21_Assignment-main\\SimpleSimulator\\input.txt");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); 
-//        PrintWriter writer = new PrintWriter("D:\\Sem_2\\CO\\CO-Assignment-main\\CO_M21_Assignment-main\\CO_M21_Assignment-main\\SimpleSimulator\\graph.txt", "UTF-8");
+        //  FileReader reader = new FileReader("D:\\Sem_2\\CO\\CO-Assignment-main2\\CO_M21_Assignment-main\\CO_M21_Assignment-main\\SimpleSimulator\\input.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        //  BufferedReader br = new BufferedReader(reader);
+         PrintWriter writer = new PrintWriter("D:\\Sem_2\\CO\\CO-Assignment-main2\\CO_M21_Assignment-main\\CO_M21_Assignment-main\\SimpleSimulator\\graph.txt", "UTF-8");
 
         String str = " ";
 
@@ -556,11 +558,12 @@ public class sim {
             int line_number = execution_star(inst); //"jmp 5"
 
             printer_reg();
-//            writer.println(program_counter_int);
+            writer.println(program_counter_int);
             program_counter_int = line_number;
             inst = MEM[program_counter_int];
         }
-//        writer.println(program_counter_int);
+        writer.println(program_counter_int);
+        writer.close();
         Program_counter_bn(program_counter_int);
         Registers_Values[7] = 0;
         printer_reg();
@@ -570,5 +573,8 @@ public class sim {
         }
 
         br.close();
+
+        
+
     }
 }
